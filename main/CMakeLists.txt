@@ -48,6 +48,7 @@ target_link_libraries( BlockingApp
                  Qt5::Widgets
                  Qt5::Core
                  Qt5::Xml
+                 SABUtils
           )
 DeployQt( BlockingApp . )
 DeploySystem( BlockingApp )

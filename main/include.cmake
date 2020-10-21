@@ -1,17 +1,17 @@
 set(qtproject_SRCS
     main.cpp    
-    mainwindow.cpp
+    MainWindow.cpp
 )
 
 set(qtproject_H
-    mainwindow.h
+    MainWindow.h
 )
 
 set(project_H
 )
 
 set(qtproject_UIS
-    mainwindow.ui
+    MainWindow.ui
 )
 
 

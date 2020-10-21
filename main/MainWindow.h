@@ -17,9 +17,11 @@ public:
     explicit CMainWindow( QWidget* parent = nullptr );
     ~CMainWindow();
 
-private slots:
+private Q_SLOTS:
     void slotThatTakesTime();
 
+Q_SIGNALS:
+    void sigToggle( bool xEnable );
 private:
     void processNetlistCreate();
     void processStatusUpdate();

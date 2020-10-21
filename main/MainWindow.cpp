@@ -26,6 +26,7 @@ CMainWindow::CMainWindow(QWidget *parent) :
     ui->setupUi(this);
     //QApplication::instance()->installNativeEventFilter(new MyNativeEventFilter);
     connect(ui->PB_OK, SIGNAL(clicked()), this, SLOT(slotThatTakesTime()));
+    connect( this, &CMainWindow::sigToggle, ui->PB_OK, &QPushButton::setEnabled );
 
     QThread::currentThread()->setObjectName( "Main GUI Thread" );
 }
@@ -41,7 +42,7 @@ void CMainWindow::processNetlistCreate()
     {
         qDebug() << "processNetlistCreate inside Loop: Thread ID: " << QThread::currentThread()->objectName() << "-" << QThread::currentThread();
         qDebug() << "MainWindow::processNetlistCreate(): ii=" << ii;
-        ui->PB_OK->setEnabled( ( ii % 2 ) == 1 );
+        emit sigToggle( ( ii % 2 ) == 1 );
         QThread::sleep( 1 );
     }
 }
@@ -52,7 +53,7 @@ void CMainWindow::processStatusUpdate()
     for(int ii =0 ; ii < kILOOPCNT; ii++) {
         qDebug() << "processStatusUpdate inside Loop: Thread ID: " << QThread::currentThread()->objectName() << "-" << QThread::currentThread();
         qDebug() << "MainWindow::processStatusUpdate(): ii=" << ii;
-        ui->PB_OK->setEnabled( ( ii % 2 ) == 1 );
+        emit sigToggle( (ii % 2) == 1 );
         QThread::sleep(1);
     }
 }

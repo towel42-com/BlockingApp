@@ -37,10 +37,11 @@ void CMainWindow::processNetlistCreate()
     qDebug() << "processNetlistCreate: Thread ID: " << QThread::currentThread()->objectName() << "-" << QThread::currentThread();
 
     // For loop mimicing long process time
-    for ( int i = 0; i < kILOOPCNT; i++ )
+    for ( int ii = 0; ii < kILOOPCNT; ii++ )
     {
         qDebug() << "processNetlistCreate inside Loop: Thread ID: " << QThread::currentThread()->objectName() << "-" << QThread::currentThread();
-        qDebug() << "MainWindow::processNetlistCreate(): i=" << i;
+        qDebug() << "MainWindow::processNetlistCreate(): ii=" << ii;
+        ui->PB_OK->setEnabled( ( ii % 2 ) == 1 );
         QThread::sleep( 1 );
     }
 }
@@ -48,9 +49,10 @@ void CMainWindow::processNetlistCreate()
 void CMainWindow::processStatusUpdate()
 {
     // For loop mimicing long process time
-    for(int i =0 ; i < kILOOPCNT; i++) {
+    for(int ii =0 ; ii < kILOOPCNT; ii++) {
         qDebug() << "processStatusUpdate inside Loop: Thread ID: " << QThread::currentThread()->objectName() << "-" << QThread::currentThread();
-        qDebug() << "MainWindow::processStatusUpdate(): i=" << i;
+        qDebug() << "MainWindow::processStatusUpdate(): ii=" << ii;
+        ui->PB_OK->setEnabled( ( ii % 2 ) == 1 );
         QThread::sleep(1);
     }
 }
@@ -72,6 +74,7 @@ void CMainWindow::slotThatTakesTime()
             processStatusUpdate();
             QApplication::instance()->processEvents( QEventLoop::ExcludeUserInputEvents );
             loopCnt++;
+            ui->PB_OK->setEnabled( ( loopCnt % 2 ) == 1 );
         }
     };
 

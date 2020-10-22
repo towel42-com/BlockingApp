@@ -25,11 +25,18 @@ CMainWindow::CMainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     //QApplication::instance()->installNativeEventFilter(new MyNativeEventFilter);
-    connect(ui->PB_OK, SIGNAL(clicked()), this, SLOT(slotThatTakesTime()));
-    connect( this, &CMainWindow::sigToggle, ui->PB_OK, &QPushButton::setEnabled );
+    connect(ui->progessBtn, &QPushButton::clicked, this, &CMainWindow::slotProgressBtn );
+    connect( ui->eventBtn, &QPushButton::clicked, this, &CMainWindow::slotEventBtn );
+    connect( this, &CMainWindow::sigToggle, this, &CMainWindow::slotToggle );
 
     QThread::currentThread()->setObjectName( "Main GUI Thread" );
 }
+
+
+CMainWindow::~CMainWindow()
+{
+}
+
 
 #define kILOOPCNT 2
 #define kOLOOPCNT 1
@@ -58,11 +65,10 @@ void CMainWindow::processStatusUpdate()
     }
 }
 
-void CMainWindow::slotThatTakesTime()
+std::function< void() > CMainWindow::getFunc()
 {
-    ui->PB_OK->setEnabled( false );
     std::function< void() > lFunc =
-    [ this ]()
+        [this]()
     {
         qDebug() << "Inside MainWindow::slotOKClicked";
         int loopCnt = 0;
@@ -73,19 +79,41 @@ void CMainWindow::slotThatTakesTime()
             qDebug() << "MainWindow::processStatusUpdate(): loopCnt=" << loopCnt;
             processNetlistCreate();
             processStatusUpdate();
-            QApplication::instance()->processEvents( QEventLoop::ExcludeUserInputEvents );
             loopCnt++;
-            ui->PB_OK->setEnabled( ( loopCnt % 2 ) == 1 );
+            emit sigToggle( (loopCnt % 2) == 1 );
         }
     };
+    return lFunc;
+}
 
-    NSABUtils::CThreadedProgressDialog dlg( lFunc, this );
+void CMainWindow::slotProgressBtn()
+{
+    lAllowEnable = true;
+    emit sigToggle( false );
+
+    NSABUtils::CThreadedProgressDialog dlg( getFunc(), this );
     dlg.setLabelText( "Long Running Thread Label" );
     dlg.exec();
-    ui->PB_OK->setEnabled( true );
+
+    emit sigToggle( true );
 }
 
-CMainWindow::~CMainWindow()
+void CMainWindow::slotEventBtn()
 {
+    lAllowEnable = false;
+    emit sigToggle( false );
+
+    NSABUtils::CThreadedEventLoop eLoop( getFunc(), this );
+    eLoop.exec();
+
+    lAllowEnable = true;
+    emit sigToggle( true );
 }
 
+void CMainWindow::slotToggle( bool xEnabled )
+{
+    if ( xEnabled && !lAllowEnable )
+        return;
+    ui->progessBtn->setEnabled( xEnabled );
+    ui->eventBtn->setEnabled( xEnabled );
+}

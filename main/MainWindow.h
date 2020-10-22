@@ -18,14 +18,18 @@ public:
     ~CMainWindow();
 
 private Q_SLOTS:
-    void slotThatTakesTime();
-
+    void slotProgressBtn();
+    void slotEventBtn();
+    void slotToggle( bool xEnable );
 Q_SIGNALS:
     void sigToggle( bool xEnable );
+
 private:
     void processNetlistCreate();
     void processStatusUpdate();
 private:
+    bool lAllowEnable{ true };
+    std::function< void() > getFunc();
     std::unique_ptr < Ui::CMainWindow > ui;
 };
 

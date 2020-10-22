@@ -32,14 +32,13 @@ CMainWindow::CMainWindow(QWidget *parent) :
     QThread::currentThread()->setObjectName( "Main GUI Thread" );
 }
 
-
 CMainWindow::~CMainWindow()
 {
 }
 
-
 #define kILOOPCNT 2
 #define kOLOOPCNT 1
+
 void CMainWindow::processNetlistCreate()
 {
     qDebug() << "processNetlistCreate: Thread ID: " << QThread::currentThread()->objectName() << "-" << QThread::currentThread();
@@ -50,6 +49,11 @@ void CMainWindow::processNetlistCreate()
         qDebug() << "processNetlistCreate inside Loop: Thread ID: " << QThread::currentThread()->objectName() << "-" << QThread::currentThread();
         qDebug() << "MainWindow::processNetlistCreate(): ii=" << ii;
         emit sigToggle( ( ii % 2 ) == 1 );
+        for( int jj = 0; jj < 10900900; ++jj )
+        {
+            jj = jj + 100;
+            ;
+        }
         QThread::sleep( 1 );
     }
 }
@@ -79,8 +83,8 @@ std::function< void() > CMainWindow::getFunc()
             qDebug() << "MainWindow::processStatusUpdate(): loopCnt=" << loopCnt;
             processNetlistCreate();
             processStatusUpdate();
-            loopCnt++;
             emit sigToggle( (loopCnt % 2) == 1 );
+            loopCnt++;
         }
     };
     return lFunc;
